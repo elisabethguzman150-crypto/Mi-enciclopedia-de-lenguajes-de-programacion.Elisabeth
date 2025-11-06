@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Enciclopedia de Lenguajes de Programación - COBAEJ 20</title>
+    
+    <!-- Enlace a Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Iconos de Lucide (usados para utilidades) -->
+    <script type="module" src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Nuevo tipo de letra: Caveat (Estilo Manuscrito/Libreta) */
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap');
+        
+        body {
+            /* Aplicar la nueva fuente a todo el cuerpo */
+            font-family: 'Caveat', cursive; 
+            min-height: 100vh;
+        }
+
+        /* Define la animación de pulsación lenta para logos */
+        @keyframes pulse-slow {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.03); /* Ligeramente más grande */
+            }
+        }
+        .animate-pulse-slow {
+            animation: pulse-slow 5s ease-in-out infinite;
+        }
+
+        /* Estilo Sketch General (Similar a un cuaderno/apunte) */
+        .sketch-card {
+            background-color: #ffffff;
+            border-radius: 1.5rem; /* Bordes más redondeados */
+            border: 4px solid #1a1a2e; /* Borde oscuro */
+            box-shadow: 10px 10px 0px rgba(26, 26, 46, 0.4); /* Sombra marcada */
+            transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, background-color 0.3s;
+            position: relative; 
+        }
+
+        /* Efecto adicional para las tarjetas de lenguaje */
+        .language-card:hover {
+            transform: translate(-3px, -3px) scale(1.02); /* Escala ligeramente y mueve */
+            box-shadow: 13px 13px 0px rgba(26, 26, 46, 0.6);
+        }
+
+        /* Estilo para los botones de utilidad */
+        .utility-btn {
+            border: 3px solid #1a1a2e;
+            border-radius: 9999px; /* Botón redondo */
+            background-color: #ffe0b2; /* Color naranja suave */
+            box-shadow: 4px 4px 0px #1a1a2e;
+            transition: all 0.2s ease-out; /* Transición más rápida */
+            font-weight: 700;
+        }
+
+        .utility-btn:hover {
+            transform: translateY(-2px) scale(1.05); /* Ligeramente más grande al pasar el cursor */
+            box-shadow: 6px 6px 0px #1a1a2e;
+        }
+
+        .utility-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #1a1a2e;
+        }
+
+        /* --- ESTILOS MODO OSCURO --- */
+        .dark-mode {
+            background-color: #1a1a2e; /* Fondo oscuro principal */
+            color: #e0e0e0; /* Texto claro */
+        }
+
+        .dark-mode .sketch-card {
+            background-color: #333958; /* Fondo de tarjetas más oscuro */
+            border-color: #a0aec0; /* Borde más claro */
+            box-shadow: 8px 8px 0px rgba(160, 174, 192, 0.4);
+        }
+
+        .dark-mode .language-card:hover {
+            box-shadow: 10px 10px 0px rgba(160, 174, 192, 0.6);
+        }
+
+        .dark-mode .utility-btn {
+            background-color: #4c4e72; /* Botón oscuro */
+            border-color: #a0aec0;
+            box-shadow: 4px 4px 0px #a0aec0;
+            color: #f0f0f0;
+        }
+
+        .dark-mode .utility-btn:active {
+            box-shadow: 2px 2px 0px #a0aec0;
+        }
+
+        .dark-mode .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.85);
+        }
+
+        .dark-mode .modal-content {
+            background-color: #2c2f48;
+            border-color: #a0aec0;
+            box-shadow: 15px 15px 0px rgba(160, 174, 192, 0.7);
+            color: #e0e0e0;
+        }
+
+        /* Estilos para el código en el modal */
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        /* Estilos para el efecto de lluvia de iconos */
+        .falling-icon {
+            position: fixed;
+            top: -50px; 
+            animation: fall linear forwards;
+            pointer-events: none;
+            opacity: 0.8;
+            z-index: 5;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Asegura que los títulos sean gruesos para la fuente Caveat */
+        h1, h2, h3 {
+            font-weight: 700; 
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 bg-[#f0f4f8] text-gray-900 transition-colors duration-500">
+    <div id="app" class="max-w-7xl mx-auto">
+        
+        <!-- HEADER / CONTENEDOR PRINCIPAL DE LOGOS Y TÍTULO -->
+        <header class="text-center mb-12">
+
+            <!-- FILA SUPERIOR: LOGOS CUADRADO Y RECTANGULAR ADICIONAL -->
+            <div class="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-8 mb-6">
+                
+                <!-- SLOT 1: Logo Cuadrado 1 (Izquierdo) con movimiento -->
+                <div class="w-16 h-16 border-4 border-amber-800 rounded-lg flex items-center justify-center bg-white p-1 flex-shrink-0 shadow-md animate-pulse-slow">
+                    <!-- Placeholder para Logo 1 -->
+                    <img src="file:///C:/Users/Elisabeth%20Garc%C3%ADa/Downloads/WhatsApp%20Image%202025-10-20%20at%209.19.33%20AM.jpeg" alt="Logo Cuadrado Izquierdo" class="w-full h-full object-contain rounded" 
+                         onerror="this.onerror=null; this.src='https://placehold.co/64x64/E0E0E0/1a1a2e?text=C1'; this.classList.add('p-2');">
+                </div>
+
+                <!-- SLOT 2: Logo Rectangular Adicional (Nuevo) con movimiento -->
+                <div class="w-full sm:w-64 h-16 border-4 border-red-600 rounded-lg flex items-center justify-center bg-red-100 p-2 shadow-lg flex-shrink-0 animate-pulse-slow">
+                    <!-- Placeholder para Logo Rectangular -->
+                    <img src="file:///C:/Users/Elisabeth%20Garc%C3%ADa/Downloads/WhatsApp%20Image%202025-10-20%20at%209.19.04%20AM.jpeg" alt="Logo Rectangular Nuevo" class="w-full h-full object-contain rounded" 
+                         onerror="this.onerror=null; this.src='https://placehold.co/256x64/FCA5A5/1a1a2e?text=LOGO RECTANGULAR 2'; this.classList.add('p-1');">
+                </div>
+            </div>
+
+            <!-- FILA INFERIOR: TÍTULO PRINCIPAL (Rectángulo Grande Original) -->
+            <div class="flex justify-center">
+                <div class="inline-block relative p-4 bg-yellow-200 sketch-card border-4 border-amber-800 max-w-xl">
+                    <h1 class="text-4xl md:text-5xl font-extrabold text-[#1a1a2e] tracking-tight">
+                        Mi Enciclopedia de Lenguajes de Programación
+                    </h1>
+                    <p class="text-xl md:text-2xl text-amber-800 mt-2 font-bold">COBAEJ Plantel 20 - Programación</p>
+                    
+                    <!-- SLOT 3: Logo Cuadrado 2 (El logo original derecho, ahora como adorno) con movimiento -->
+                    <img id="header-logo" src="data:image/jpeg;base64,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" alt="Logo Cuadrado Derecho" 
+                         class="absolute w-12 h-12 right-[-15px] top-[-15px] rounded-full object-cover border-4 border-[#1a1a2e] bg-white p-1 shadow-lg animate-pulse-slow" 
+                         onerror="this.onerror=null; this.src='https://placehold.co/48x48/1a1a2e/ffffff?text=C2';" 
+                    >
+                </div>
+            </div>
+            
+        </header>
+
+        <!-- SECCIÓN DE UTILIDADES / BOTONES PRINCIPALES -->
+        <nav class="flex flex-wrap justify-center space-x-3 md:space-x-4 mb-12">
+            
+            <button id="search-btn" class="utility-btn flex items-center px-4 py-2 text-lg hover:bg-lime-300">
+                <i data-lucide="search" class="w-5 h-5 mr-2"></i> 
+                Buscar
+            </button>
+
+            <button id="about-btn" class="utility-btn flex items-center px-4 py-2 text-lg hover:bg-yellow-300">
+                <i data-lucide="info" class="w-5 h-5 mr-2"></i> 
+                Acerca de
+            </button>
+            <button id="activities-btn" class="utility-btn flex items-center px-4 py-2 text-lg hover:bg-yellow-300">
+                <i data-lucide="rocket" class="w-5 h-5 mr-2"></i> 
+                Actividades
+            </button>
+            <button id="ai-assistant-btn" class="utility-btn flex items-center px-4 py-2 text-lg hover:bg-yellow-300">
+                <i data-lucide="sparkles" class="w-5 h-5 mr-2"></i> 
+                Asistente AI
+            </button>
+            
+            <!-- Botón de Modo Oscuro/Claro -->
+            <button id="theme-toggle-btn" class="utility-btn flex items-center px-4 py-2 text-lg hover:bg-gray-400">
+                <i id="theme-icon" data-lucide="moon" class="w-5 h-5 mr-2"></i> 
+                Modo Oscuro
+            </button>
+        </nav>
+
+        <!-- LISTA DE LENGUAJES DE PROGRAMACIÓN -->
+        <main id="language-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <!-- Las tarjetas de lenguajes se renderizarán aquí -->
+        </main>
+    </div>
+
+    <!-- MODAL (Oculto por defecto) -->
+    <div id="modal-overlay" class="modal-overlay fixed inset-0 hidden items-center justify-center p-4 z-50">
+        <div id="modal-content" class="sketch-card modal-content w-full max-w-3xl max-h-[90vh] overflow-y-auto p-8 relative">
+            <button id="close-modal-btn" class="absolute top-4 right-4 text-[#1a1a2e] hover:text-red-600 transition">
+                <i data-lucide="x" class="w-8 h-8"></i>
+            </button>
+            <div id="modal-body" class="pt-4">
+                <!-- Contenido dinámico del modal -->
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS JAVASCRIPT -->
+    <script>
+        // ----------------------------------------------------------------------------------
+        // Datos de Lenguajes de Programación (Incluyendo los detalles solicitados)
+        // ----------------------------------------------------------------------------------
+        const languages = [
+            {
+                name: "Python",
+                description: "Lenguaje versátil ideal para principiantes y para desarrollo de IA, análisis de datos y backend web.",
+                iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg",
+                tipo: "Alto nivel, Interpretado",
+                caracteristica: "Legibilidad y versatilidad. Ideal para análisis de datos y desarrollo rápido.",
+                usoComun: "Ciencia de Datos, Machine Learning (IA), Desarrollo Web (Backend - Django, Flask), Automatización de scripts.",
+                ejemploCodigo: 'nombre = "Mundo"\nprint(f"Hola, {nombre}!")'
+            },
+            {
+                name: "JavaScript",
+                description: "Es el lenguaje fundamental de la web moderna. Se usa para frontend, backend (Node.js) y desarrollo móvil.",
+                iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg",
+                tipo: "Alto nivel, Interpretado (JIT)",
+                caracteristica: "Lenguaje esencial para el dinamismo y la interactividad de la Web.",
+                usoComun: "Desarrollo Web (Frontend y Backend), Aplicaciones Móviles (React Native), Desarrollo de Videojuegos 2D.",
+                ejemploCodigo: 'const boton = document.getElementById("btn");\nboton.addEventListener("click", () => {\n  console.log("¡Clicado!");\n});'
+            },
+            {
+                name: "Java",
+                description: "Poderoso lenguaje orientado a objetos, usado ampliamente en desarrollo empresarial, aplicaciones Android y sistemas distribuidos.",
+                iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg",
+                tipo: "Alto nivel, Compilado (a Bytecode)",
+                caracteristica: "Independencia de plataforma y escalabilidad. Usado en grandes sistemas empresariales.",
+                usoComun: "Aplicaciones Empresariales a gran escala, Desarrollo Móvil (Android nativo), Sistemas de Backend robustos.",
+                ejemploCodigo: 'public class Main {\n  public static void main(String[] args) {\n    System.out.println("Java en acción");\n  }\n}'
+            },
+            {
+                name: "C++",
+                description: "Conocido por su velocidad y control de bajo nivel. Es esencial en desarrollo de juegos, sistemas operativos y software de alto rendimiento.",
+                iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg",
+                tipo: "Bajo/Medio nivel, Compilado",
+                caracteristica: "Control de bajo nivel de memoria y alto rendimiento. Ideal para sistemas críticos.",
+                usoComun: "Desarrollo de Videojuegos (motores como Unreal), Sistemas Operativos, Software de alto rendimiento, Gráficos 3D.",
+                ejemploCodigo: '#include <iostream>\n\nint main() {\n  std::cout << "Rendimiento C++" << std::endl;\n  return 0;\n}'
+            },
+            {
+                name: "C#",
+                description: "Desarrollado por Microsoft, es la base de las aplicaciones .NET, Unity (videojuegos) y software empresarial.",
+                iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg",
+                tipo: "Alto nivel, Compilado (a Bytecode CLI)",
+                caracteristica: "Fuertemente tipado y orientado a objetos. Fuerte integración con el ecosistema .NET y Unity.",
+                usoComun: "Desarrollo de Videojuegos (Unity), Aplicaciones de Escritorio (Windows), Servicios Web (ASP.NET).",
+                ejemploCodigo: 'using System;\n\npublic class Program {\n  public static void Main(string[] args) {\n    Console.WriteLine("Hola C#");\n  }\n}'
+            },
+            {
+                name: "PHP",
+                description: "Lenguaje popular para el desarrollo web en el lado del servidor, siendo WordPress su plataforma más famosa.",
+                iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/php/php-original.svg",
+                tipo: "Alto nivel, Interpretado",
+                caracteristica: "Especializado en la creación de páginas web dinámicas del lado del servidor.",
+                usoComun: "Desarrollo Web (Backend), Sistemas de Gestión de Contenidos (CMS como WordPress), Comercio Electrónico.",
+                ejemploCodigo: '<?php\n  $saludo = "Servidor listo";\n  echo "<h1>" . $saludo . "</h1>";\n?>'
+            },
+            {
+                name: "Swift",
+                description: "El lenguaje moderno de Apple para el desarrollo de aplicaciones iOS, macOS, watchOS y tvOS.",
+                iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/swift/swift-original.svg",
+                tipo: "Alto nivel, Compilado",
+                caracteristica: "Moderno, seguro y diseñado para la velocidad. Enfocado en el ecosistema de Apple.",
+                usoComun: "Desarrollo de Aplicaciones Móviles (iOS, iPadOS), Aplicaciones de Escritorio (macOS).",
+                ejemploCodigo: 'let mensaje = "Hola Swift"\nprint(mensaje)'
+            },
+            {
+                name: "Go",
+                description: "Creado por Google, es un lenguaje simple, eficiente y escalable, perfecto para microservicios y sistemas de red.",
+                iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/go/go-original-wordmark.svg",
+                tipo: "Alto nivel, Compilado",
+                caracteristica: "Concurrencia (manejo de múltiples tareas a la vez) y tipado estático, ideal para la nube.",
+                usoComun: "Microservicios, Sistemas Distribuidos, Backend de alto rendimiento, Herramientas de línea de comandos.",
+                ejemploCodigo: 'package main\n\nimport "fmt"\n\nfunc main() {\n  fmt.Println("Concurrente Go")\n}'
+            },
+             {
+                name: "TypeScript", 
+                description: "Superconjunto de JavaScript que añade tipado estático, mejorando la calidad y escalabilidad del código web.", 
+                iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg",
+                tipo: "Alto nivel, Transcompilado",
+                caracteristica: "Añade tipado estático y herramientas de escalabilidad a JavaScript.",
+                usoComun: "Grandes Proyectos Web (Frontend y Backend con Node.js), Frameworks como Angular y React.",
+                ejemploCodigo: 'function saludar(nombre: string) {\n  return `Hola, ${nombre}`;\n}\n\nsaludar("Estudiante");'
+            },
+            {
+                name: "HTML", 
+                description: "Lenguaje de Marcado de Hipertexto. La estructura fundamental de todas las páginas web.", 
+                iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg",
+                tipo: "Lenguaje de Marcado",
+                caracteristica: "Define la estructura y contenido semántico de las páginas web.",
+                usoComun: "Estructura de todos los documentos web, Aplicaciones Híbridas.",
+                ejemploCodigo: '<h1>Título Principal</h1>\n<p>Este es un párrafo de texto.</p>'
+            },
+            {
+                name: "CSS", 
+                description: "Hojas de Estilo en Cascada. Define el estilo visual y el diseño de los documentos escritos en HTML.", 
+                iconUrl: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg",
+                tipo: "Lenguaje de Hojas de Estilo",
+                caracteristica: "Controla la presentación visual (colores, fuentes, diseño) de los elementos HTML.",
+                usoComun: "Estilizado de todas las páginas web, animaciones y diseño responsivo.",
+                ejemploCodigo: 'body {\n  background-color: #f0f0f0;\n  font-family: sans-serif;\n}\n\n.boton-rojo { color: red; }'
+            }
+        ];
+
+        const iconUrls = languages.map(lang => lang.iconUrl).filter(url => url);
+
+        // Referencias del DOM
+        const body = document.body;
+        const languageList = document.getElementById('language-list');
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalBody = document.getElementById('modal-body');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const searchBtn = document.getElementById('search-btn');
+        const aboutBtn = document.getElementById('about-btn');
+        const activitiesBtn = document.getElementById('activities-btn');
+        const aiAssistantBtn = document.getElementById('ai-assistant-btn');
+        const themeToggleBtn = document.getElementById('theme-toggle-btn');
+        const themeIcon = document.getElementById('theme-icon');
+
+        // Estado del Modal
+        let currentModalView = 'closed'; 
+
+
+        // ----------------------------------------------------------------------------------
+        // Funciones de la Interfaz
+        // ----------------------------------------------------------------------------------
+
+        /**
+         * Renderiza las tarjetas de lenguajes en la vista principal, filtrando si es necesario.
+         */
+        function renderLanguageCards(filterText = '') {
+            const filteredLanguages = languages.filter(lang => 
+                lang.name.toLowerCase().includes(filterText.toLowerCase()) || 
+                lang.description.toLowerCase().includes(filterText.toLowerCase())
+            );
+
+            if (filteredLanguages.length === 0 && filterText !== '') {
+                // Asegurar que el mensaje de no resultados sea visible
+                const textColorClass = body.classList.contains('dark-mode') ? 'text-gray-400' : 'text-gray-600';
+                languageList.innerHTML = `<p class="text-2xl text-center col-span-full py-10 opacity-80 ${textColorClass} font-bold">
+                    No se encontraron lenguajes que coincidan con "${filterText}".
+                </p>`;
+                return;
+            }
+
+            languageList.innerHTML = filteredLanguages.map(lang => `
+                <div 
+                    class="sketch-card language-card p-6 flex flex-col items-center text-center bg-white cursor-pointer transition-all duration-300"
+                    onclick="showLanguageDetail('${lang.name}')"
+                >
+                    <img 
+                        src="${lang.iconUrl}" 
+                        alt="Icono de ${lang.name}" 
+                        class="w-20 h-20 mb-4"
+                        onerror="this.onerror=null; this.src='https://placehold.co/80x80/293241/ffffff?text=${lang.name.substring(0,2)}';" 
+                    >
+                    <h2 class="text-3xl font-bold text-[#1a1a2e] mb-2">${lang.name}</h2>
+                    <p class="text-gray-600 text-lg">${lang.description.substring(0, 100)}...</p>
+                    <span class="mt-4 text-sm text-blue-600 font-semibold underline">Ver detalles completos</span>
+                </div>
+            `).join('');
+            
+            // Reajusta los colores del texto de las tarjetas al aplicar el modo oscuro
+            updateLanguageCardStyles();
+        }
+
+        /**
+         * Muestra los detalles completos de un lenguaje en el modal.
+         */
+        function showLanguageDetail(langName) {
+            const lang = languages.find(l => l.name === langName);
+            if (!lang) return;
+
+            // Clases de texto adaptables al modo oscuro
+            const isDarkMode = body.classList.contains('dark-mode');
+            const textColorClass = isDarkMode ? 'text-gray-200' : 'text-gray-700';
+
+            // Contenido principal del modal (Resumen)
+            const detailContent = `
+                <h2 class="text-4xl font-bold text-amber-700 mb-4 text-center border-b-2 border-dashed pb-2">${lang.name}</h2>
+                <div class="flex justify-center mb-6">
+                    <img 
+                        src="${lang.iconUrl}" 
+                        alt="Icono de ${lang.name}" 
+                        class="w-24 h-24 border-4 p-1 rounded-full ${isDarkMode ? 'bg-gray-700 border-gray-500' : 'bg-white border-gray-300'}"
+                        onerror="this.onerror=null; this.src='https://placehold.co/96x96/293241/ffffff?text=${lang.name.substring(0,2)}';"
+                    >
+                </div>
+                
+                <p class="text-xl ${textColorClass} mb-8 text-center">${lang.description}</p>
+                
+                <!-- Sección de Información Requerida (Listado) -->
+                <div class="space-y-4 p-4 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'} rounded-xl border-4 border-dashed border-red-400 shadow-lg">
+                    <h3 class="text-3xl font-bold text-red-700 mb-4 border-b-2 border-red-500 pb-2 flex items-center">
+                        <i data-lucide="notebook-text" class="w-6 h-6 mr-3"></i> Ficha Técnica
+                    </h3>
+
+                    <!-- 1. Tipo de Lenguaje -->
+                    <div class="flex items-start text-lg">
+                        <i data-lucide="tag" class="w-6 h-6 mr-3 mt-1 flex-shrink-0 ${isDarkMode ? 'text-cyan-400' : 'text-cyan-700'}"></i>
+                        <div class="${textColorClass} font-bold mr-2 w-1/3 md:w-1/4">Tipo de Lenguaje:</div>
+                        <div class="${textColorClass} w-2/3 md:w-3/4">${lang.tipo}</div>
+                    </div>
+
+                    <!-- 2. Característica Principal -->
+                    <div class="flex items-start text-lg">
+                        <i data-lucide="gem" class="w-6 h-6 mr-3 mt-1 flex-shrink-0 ${isDarkMode ? 'text-lime-400' : 'text-lime-700'}"></i>
+                        <div class="${textColorClass} font-bold mr-2 w-1/3 md:w-1/4">Principal Característica:</div>
+                        <div class="${textColorClass} w-2/3 md:w-3/4">${lang.caracteristica}</div>
+                    </div>
+
+                    <!-- 3. Uso Común -->
+                    <div class="flex items-start text-lg">
+                        <i data-lucide="compass" class="w-6 h-6 mr-3 mt-1 flex-shrink-0 ${isDarkMode ? 'text-yellow-400' : 'text-yellow-700'}"></i>
+                        <div class="${textColorClass} font-bold mr-2 w-1/3 md:w-1/4">Se usa Comúnmente en:</div>
+                        <div class="${textColorClass} w-2/3 md:w-3/4">${lang.usoComun}</div>
+                    </div>
+                </div>
+                
+                <!-- 4. Ejemplo de Código -->
+                <h3 class="text-3xl font-bold text-red-700 mt-8 mb-3 border-b-2 border-dashed pb-2 flex items-center">
+                    <i data-lucide="code" class="w-6 h-6 mr-3"></i> Ejemplo Simple de Código
+                </h3>
+                <pre class="bg-gray-900 text-yellow-300 p-4 rounded-xl shadow-xl overflow-x-auto text-base font-mono border-4 border-gray-700">${lang.ejemploCodigo}</pre>
+
+                <div class="mt-8 text-center">
+                    <button class="utility-btn px-6 py-3 text-xl hover:bg-red-300" onclick="closeModal()">
+                        Cerrar
+                    </button>
+                </div>
+            `;
+            
+            modalBody.innerHTML = detailContent;
+            lucide.createIcons(); // Recargar iconos dentro del modal
+            openModal('language-detail');
+        }
+
+
+        /**
+         * Muestra el modal de Búsqueda.
+         */
+        function showSearchModal() {
+            const isDarkMode = body.classList.contains('dark-mode');
+            const searchContent = `
+                <h2 class="text-4xl font-bold text-amber-700 mb-6 text-center">Búsqueda Rápida</h2>
+                <div class="flex items-center space-x-3 mb-6">
+                    <i data-lucide="search" class="w-8 h-8 flex-shrink-0 opacity-80 ${isDarkMode ? 'text-gray-400' : 'text-gray-900'}"></i>
+                    <input 
+                        type="text" 
+                        id="search-input" 
+                        placeholder="Escribe el nombre del lenguaje o una palabra clave..." 
+                        class="w-full p-4 border-4 border-lime-500 rounded-lg text-xl focus:outline-none focus:border-lime-700 transition-colors duration-300 ${isDarkMode ? 'bg-gray-800 text-white' : 'bg-gray-50'}"
+                        oninput="searchLanguages(this.value)"
+                    >
+                </div>
+                <p class="text-center text-lg ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}">
+                    Los resultados se actualizarán automáticamente en la pantalla principal.
+                </p>
+                <div class="mt-8 text-center">
+                    <button class="utility-btn px-6 py-3 text-xl hover:bg-red-300" onclick="closeModal()">
+                        Cerrar Búsqueda
+                    </button>
+                </div>
+            `;
+            modalBody.innerHTML = searchContent;
+            lucide.createIcons();
+            openModal('search');
+            document.getElementById('search-input').focus();
+        }
+
+        /**
+         * Realiza la búsqueda y actualiza la lista de lenguajes.
+         * @param {string} query - El término de búsqueda.
+         */
+        function searchLanguages(query) {
+            renderLanguageCards(query);
+        }
+
+        /**
+         * Alterna entre modo claro y modo oscuro.
+         */
+        function toggleTheme() {
+            const isDarkMode = body.classList.toggle('dark-mode');
+            
+            // Actualizar clases de Tailwind para Body (fondo y texto)
+            if (isDarkMode) {
+                body.classList.remove('bg-[#f0f4f8]', 'text-gray-900');
+                body.classList.add('bg-[#1a1a2e]', 'text-gray-100');
+                themeIcon.setAttribute('data-lucide', 'sun');
+                themeToggleBtn.innerHTML = '<i id="theme-icon" data-lucide="sun" class="w-5 h-5 mr-2"></i> Modo Claro';
+            } else {
+                body.classList.remove('bg-[#1a1a2e]', 'text-gray-100');
+                body.classList.add('bg-[#f0f4f8]', 'text-gray-900');
+                themeIcon.setAttribute('data-lucide', 'moon');
+                themeToggleBtn.innerHTML = '<i id="theme-icon" data-lucide="moon" class="w-5 h-5 mr-2"></i> Modo Oscuro';
+            }
+            
+            lucide.createIcons();
+            updateLanguageCardStyles();
+        }
+
+        /**
+         * Ajusta dinámicamente el estilo de las tarjetas de lenguaje para el modo oscuro.
+         */
+        function updateLanguageCardStyles() {
+            const isDarkMode = body.classList.contains('dark-mode');
+            const cards = document.querySelectorAll('.language-card');
+            
+            cards.forEach(card => {
+                const title = card.querySelector('h2');
+                const description = card.querySelector('p');
+                const link = card.querySelector('span');
+                
+                if (isDarkMode) {
+                    card.classList.remove('bg-white');
+                    if (title) title.classList.remove('text-[#1a1a2e]');
+                    if (description) description.classList.remove('text-gray-600');
+                    if (link) link.classList.remove('text-blue-600');
+                    
+                    if (title) title.classList.add('text-gray-200');
+                    if (description) description.classList.add('text-gray-400');
+                    if (link) link.classList.add('text-cyan-400');
+                } else {
+                    card.classList.add('bg-white');
+                    if (title) title.classList.remove('text-gray-200');
+                    if (description) description.classList.remove('text-gray-400');
+                    if (link) link.classList.remove('text-cyan-400');
+                    
+                    if (title) title.classList.add('text-[#1a1a2e]');
+                    if (description) description.classList.add('text-gray-600');
+                    if (link) link.classList.add('text-blue-600');
+                }
+            });
+        }
+        
+        // --- Otras funciones del Modal ---
+
+        /**
+         * Muestra el modal con la vista "Acerca de".
+         */
+        function showAboutModal() {
+            const isDarkMode = body.classList.contains('dark-mode');
+            const textColorClass = isDarkMode ? 'text-gray-200' : 'text-gray-700';
+
+            const aboutContent = `
+                <h2 class="text-4xl font-bold text-amber-700 mb-4 text-center">Acerca del Proyecto</h2>
+                <p class="text-xl ${textColorClass} mb-6">
+                    Esta es una Enciclopedia de Lenguajes de Programación, creada como proyecto formativo para la materia de Informática en el COBAEJ Plantel 20. 
+                    Su propósito es servir como una herramienta interactiva para que los estudiantes conozcan los lenguajes más importantes y sus aplicaciones en el mundo tecnológico.
+                </p>
+                <div class="flex justify-center mb-6">
+                    <img src="aplicacion enciclopedia.jpg" alt="Ilustración de un cuaderno de programación" class="w-2/3 rounded-lg border-4 border-[#1a1a2e] shadow-lg"
+                         onerror="this.onerror=null; this.src='https://placehold.co/400x200/5E8B7E/ffffff?text=Proyecto+COBAEJ';"
+                    >
+                </div>
+                <p class="text-lg text-gray-500 italic text-center">¡El conocimiento de la programación es la llave al futuro!</p>
+            `;
+            modalBody.innerHTML = aboutContent;
+            openModal('about');
+        }
+
+        /**
+         * Muestra el modal con las opciones de "Actividades".
+         */
+        function showActivitiesSelection() {
+            const isDarkMode = body.classList.contains('dark-mode');
+            const textColorClass = isDarkMode ? 'text-gray-200' : 'text-gray-700';
+
+            const activitiesContent = `
+                <h2 class="text-4xl font-bold text-amber-700 mb-4 text-center">Selecciona una Actividad</h2>
+                <p class="text-xl ${textColorClass} mb-6 text-center">
+                    Prueba tus conocimientos con nuestros desafíos interactivos (simulados). ¡Elige tu reto!
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+                    
+                    <!-- Botón 1: Quiz -->
+                    <button class="w-full utility-btn flex items-center justify-center p-4 text-xl hover:bg-red-400">
+                        <i data-lucide="brain" class="w-6 h-6 mr-3"></i> 
+                        Quiz: ¿A qué Lenguaje Pertenezco?
+                    </button>
+                    
+                    <!-- Botón 2: Casos de Estudio -->
+                    <button class="w-full utility-btn flex items-center justify-center p-4 text-xl hover:bg-red-400">
+                        <i data-lucide="clipboard-list" class="w-6 h-6 mr-3"></i> 
+                        Casos de Estudio (Ejemplos Reales)
+                    </button>
+
+                    <!-- Botón 3: Mini-Retos de Código -->
+                    <button class="w-full utility-btn flex items-center justify-center p-4 text-xl hover:bg-teal-400">
+                        <i data-lucide="code" class="w-6 h-6 mr-3"></i> 
+                        Mini-Retos de Código
+                    </button>
+
+                    <!-- Botón 4: Desafío de Sintaxis (Nuevo) -->
+                    <button class="w-full utility-btn flex items-center justify-center p-4 text-xl hover:bg-teal-400">
+                        <i data-lucide="zap" class="w-6 h-6 mr-3"></i> 
+                        Desafío de Sintaxis (Bug Hunt)
+                    </button>
+                    
+                    <!-- Botón 7: Simulador de Carrera (Nuevo) -->
+                    <button class="w-full utility-btn flex items-center justify-center p-4 text-xl hover:bg-purple-400 md:col-span-2">
+                        <i data-lucide="briefcase" class="w-6 h-6 mr-3"></i> 
+                        Simulador de Carrera (Roles de Trabajo)
+                    </button>
+                    
+                </div>
+            `;
+            modalBody.innerHTML = activitiesContent;
+            lucide.createIcons(); 
+            openModal('activities');
+        }
+
+        /**
+         * Muestra el modal con el "Asistente AI" (simulado).
+         */
+        function showAIAssistantModal() {
+            const isDarkMode = body.classList.contains('dark-mode');
+            const textColorClass = isDarkMode ? 'text-gray-200' : 'text-gray-700';
+            const chatBg = isDarkMode ? 'bg-gray-800' : 'bg-gray-100';
+            const inputBg = isDarkMode ? 'bg-gray-700 text-white' : 'bg-white';
+
+            const aiContent = `
+                <h2 class="text-4xl font-bold text-amber-700 mb-4 text-center">Asistente de Programación AI</h2>
+                <p class="text-xl ${textColorClass} mb-6 text-center">
+                    Pregunta a nuestro asistente (simulado) cualquier duda sobre los lenguajes de la enciclopedia.
+                </p>
+                <div class="${chatBg} p-6 rounded-lg border-2 border-[#1a1a2e] shadow-inner">
+                    <div id="chat-output" class="h-40 overflow-y-auto mb-4 p-2 bg-white border border-gray-300 rounded text-lg ${isDarkMode ? 'bg-gray-700 text-gray-100 border-gray-600' : 'bg-white'}">
+                        <p class="text-gray-500 italic">Asistente: ¡Hola! ¿En qué lenguaje de programación te puedo ayudar hoy?</p>
+                    </div>
+                    <textarea id="ai-input" class="w-full p-3 border-2 border-gray-400 rounded focus:outline-none focus:border-amber-500 resize-none text-lg ${inputBg}" rows="2" placeholder="Escribe tu pregunta aquí..."></textarea>
+                    <button class="mt-3 w-full utility-btn flex items-center justify-center p-3 text-xl hover:bg-teal-400" onclick="simulateAIResponse()">
+                        <i data-lucide="send" class="w-5 h-5 mr-2"></i> 
+                        Enviar Pregunta
+                    </button>
+                </div>
+            `;
+            modalBody.innerHTML = aiContent;
+            lucide.createIcons();
+            openModal('ai-assistant');
+        }
+
+        /**
+         * Simula una respuesta del Asistente AI (Solo para fines de demostración).
+         */
+        function simulateAIResponse() {
+            const input = document.getElementById('ai-input');
+            const output = document.getElementById('chat-output');
+            const query = input.value.trim();
+
+            if (query === "") return;
+
+            // Clases de texto adaptables al modo oscuro
+            const userColor = body.classList.contains('dark-mode') ? 'text-blue-400' : 'text-blue-800';
+            const aiColor = body.classList.contains('dark-mode') ? 'text-green-400' : 'text-green-800';
+
+            // Añadir la pregunta del usuario
+            output.innerHTML += `<p class="text-right ${userColor} font-bold">Tú: ${query}</p>`;
+            
+            // Simular respuesta
+            const dummyResponse = `Esa es una gran pregunta. ${query.includes('Python') ? 'Python es conocido por su legibilidad y es excelente para el aprendizaje automático.' : 'Todos los lenguajes de nuestra enciclopedia son valiosos; la elección depende de tu proyecto.'}`;
+            
+            // Añadir la respuesta del AI
+            output.innerHTML += `<p class="text-left ${aiColor} italic">Asistente: ${dummyResponse}</p>`;
+
+            // Scroll al final
+            output.scrollTop = output.scrollHeight;
+            input.value = '';
+        }
+
+        /**
+         * Abre el modal.
+         */
+        function openModal(viewName) {
+            currentModalView = viewName;
+            modalOverlay.classList.remove('hidden');
+            modalOverlay.classList.add('flex');
+            
+            // Ajustar color del botón de cerrar
+            const closeBtn = document.getElementById('close-modal-btn');
+            if (body.classList.contains('dark-mode')) {
+                closeBtn.classList.add('text-gray-400');
+                closeBtn.classList.remove('text-[#1a1a2e]');
+            } else {
+                closeBtn.classList.add('text-[#1a1a2e]');
+                closeBtn.classList.remove('text-gray-400');
+            }
+        }
+
+        /**
+         * Cierra el modal.
+         */
+        function closeModal() {
+            currentModalView = 'closed';
+            modalOverlay.classList.add('hidden');
+            modalOverlay.classList.remove('flex');
+            
+            // Si la búsqueda estaba activa, re-renderizar todo sin filtro
+            renderLanguageCards();
+        }
+
+        // ----------------------------------------------------------------------------------
+        // Efecto de Lluvia de Iconos (Visual)
+        // ----------------------------------------------------------------------------------
+
+        /**
+         * Crea un ícono de lenguaje que cae desde la parte superior.
+         */
+        function createIconDrop() {
+            if (iconUrls.length === 0 || currentModalView !== 'closed') return; // No llover si hay un modal abierto
+
+            const iconUrl = iconUrls[Math.floor(Math.random() * iconUrls.length)];
+            const icon = document.createElement('img');
+            
+            icon.src = iconUrl;
+            icon.alt = 'Icono de código';
+            icon.classList.add('falling-icon');
+
+            const size = Math.random() * (40 - 20) + 20; 
+            const startX = Math.random() * window.innerWidth;
+            const duration = Math.random() * (12 - 5) + 5; 
+
+            icon.style.width = `${size}px`;
+            icon.style.height = `${size}px`;
+            icon.style.left = `${startX}px`;
+            icon.style.animationDuration = `${duration}s`;
+            
+            document.body.appendChild(icon);
+
+            // Limpiar el icono del DOM cuando termine de caer para evitar sobrecarga
+            setTimeout(() => {
+                icon.remove();
+            }, (duration * 1000) + 1000);
+        }
+
+
+        // ----------------------------------------------------------------------------------
+        // Inicialización y Eventos
+        // ----------------------------------------------------------------------------------
+
+        window.onload = function () {
+            // Renderizar los botones de lenguajes
+            renderLanguageCards();
+
+            // Eventos de la interfaz 2D
+            closeModalBtn.addEventListener('click', closeModal);
+            searchBtn.addEventListener('click', showSearchModal);
+            aboutBtn.addEventListener('click', showAboutModal);
+            activitiesBtn.addEventListener('click', showActivitiesSelection); 
+            aiAssistantBtn.addEventListener('click', showAIAssistantModal);
+            themeToggleBtn.addEventListener('click', toggleTheme);
+            
+            // Inicializar iconos de Lucide
+            lucide.createIcons();
+
+            // Iniciar la lluvia de iconos
+            if (iconUrls.length > 0) {
+                // Inicia el efecto: un nuevo icono cada 300ms 
+                setInterval(createIconDrop, 300);
+                // Ráfaga inicial para poblar la pantalla 
+                for (let i = 0; i < 35; i++) { 
+                    createIconDrop();
+                }
+            }
+        };
+    </script>
+</body>
+</html>
